@@ -1,0 +1,10 @@
+{
+    "type": "postgres",
+    "host": "192.198.12.99",
+    "port": 5432,
+    "username": "inventario",
+    "password": "inventario",
+    "database": "inventario",
+    "entities": "./dist/entities/**/*.js",
+    "puertoAPI" : 3000
+}

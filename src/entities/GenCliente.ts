@@ -40,6 +40,10 @@ export class GenCliente {
   @Column("character varying", { name: "telefono", nullable: true, length: 25 })
   telefono: string | null;
 
+  @Column("character varying", { name: "tipo_identificacion_id", nullable: true, length: 2 })
+  tipoIdentificacionId: string | null;
+
+
   @OneToMany(() => FacVenta, (facVenta) => facVenta.cliente)
   facVentas: FacVenta[];
 }

@@ -47,7 +47,7 @@ export const getFactura = async (req : Request, res: Response):Promise<Response>
 export const create = async (req : Request, res: Response):Promise<Response> => {
     try{
         let record = req.body.factura;
-        console.log("factura", req.body);
+        //console.log("factura", req.body);
         facturaService.pruebaxml(req.body);
         //const resultado = await facturaService.create(record);
         //return res.status(201).json({data: resultado})

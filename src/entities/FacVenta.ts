@@ -57,6 +57,14 @@ export class FacVenta {
   })
   valorFlete: string | null;
 
+  @Column("numeric", {
+    name: "valor_total",
+    nullable: true,
+    precision: 12,
+    scale: 2,
+  })
+  valorTotal: string | null;
+
   @Column("integer", { name: "comprobante_id", nullable: true })
   comprobanteId: number | null;
 

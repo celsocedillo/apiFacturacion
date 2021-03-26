@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
-import { getRepository,  getManager, In} from 'typeorm';
+import { getRepository,  getManager, In, createQueryBuilder} from 'typeorm';
 import { FacVenta } from "../entities/FacVenta";
 import { FacVentaDetalle } from "../entities/FacVentaDetalle";
 import { FacEmisor } from "../entities/FacEmisor";
+import { GenCliente } from '../entities/GenCliente';
+import { FacTipoIdentificacion } from '../entities/FacTipoIdentificacion';
 import  builder  from 'xmlbuilder'
 
 export class FacturaServices {
@@ -42,6 +44,8 @@ export class FacturaServices {
                                 .leftJoin("factura.facVentaDetalles", "facVentaDetalles")
                                 .where("factura.id = :id", {id: pid})
                                 .getOne();
+
+            console.log("factura", result);
             return result;
         }catch(err){
             throw new Error(err);
@@ -63,7 +67,22 @@ export class FacturaServices {
     }
 
     async pruebaxml(pregistro: any){
-        
+
+        const receptor = await getRepository(GenCliente)
+                    .createQueryBuilder("cliente")
+                    .innerJoinAndMapOne("cliente.tipoIdentificacion", FacTipoIdentificacion, "tipoIdentificacion", "cliente.tipoIdentificacionId = tipoIdentificacion.id")
+                    .where("cliente.id = :id", {id: pregistro.clienteId} )
+                    .printSql()
+                    .getOne();
+
+        let codigoPorcentajeIva;
+
+        switch(pregistro.porcentajeIva){
+            case 0 : codigoPorcentajeIva = 0; break;
+            case 12: codigoPorcentajeIva = 2; break;
+            case 14: codigoPorcentajeIva = 3; break;
+        }
+
         const emisor = await  this.getEmisorById(1);
         let fac = {
             factura: {
@@ -76,29 +95,39 @@ export class FacturaServices {
                     nombreComercial: emisor?.nombreComercial,
                     ruc: emisor?.ruc,
                     claveAcceso: "",
-                    codDoc: emisor?.codigoPuntoEmision,
+                    codDoc: "01",
                     estab: emisor?.codigoEstablecimiento,
+                    ptoEmi: emisor?.codigoPuntoEmision,
                     secuencial: "111",
                     dirMatriz: emisor?.direccionMatriz
                 },
                 infoFactura: {
                     fechaEmision: pregistro.fechaEmision,
-                    dirEstablecimiento: emisor?.direccionEmisor,
-                    obligadoContabilidad: "SI",
-                    tipotipoIdentificacionComprador: "04",
-                    razonSocialComprador: "",
-                    identificacionComprador: "",
+                    obligadoContabilidad: emisor?.contabilidad,
+                    tipotipoIdentificacionComprador: receptor?.tipoIdentificacionId,
+                    razonSocialComprador: `${receptor?.apellidos} ${receptor?.nombres}`,
+                    identificacionComprador: receptor?.rucCedula,
+                    direccionComprador: receptor?.direccion,
                     totalSinImpuestos: pregistro.subTotal,
                     totalDescuento: 0.00,
                     totalConImpuestos: {
                         totalImpuesto: {
                             codigo: 2,
-                            codigoPorcentaje: 2,
+                            codigoPorcentaje: codigoPorcentajeIva,
                             baseImponible: pregistro.subTotal,
+                            tarifa: pregistro.porcentajeIva,
                             valor: pregistro.valorIva,
-                            
                         }
-                    }
+                    },
+                    propina: 0,
+                    importeTotal: pregistro.valorTotal,
+                    moneda: "DOLAR",
+                    pagos: {
+                        pago: {
+                            formaPago: "01",
+                            total: pregistro.valorTotal
+                        }
+                    }                   
                 }
             }
         }

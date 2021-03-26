@@ -42,6 +42,15 @@ export class FacVentaDetalle {
   })
   valorUnitario: string | null;
 
+  @Column("numeric", {
+    name: "valor_descuento",
+    nullable: true,
+    precision: 12,
+    scale: 2,
+  })
+  valorDescuento: string | null;
+
+  
   @ManyToOne(() => FacVenta, (facVenta) => facVenta.facVentaDetalles, {
     onDelete: "RESTRICT",
   })

@@ -5,9 +5,24 @@ import { FacVentaDetalle } from "../entities/FacVentaDetalle";
 import { FacEmisor } from "../entities/FacEmisor";
 import { GenCliente } from '../entities/GenCliente';
 import { FacTipoIdentificacion } from '../entities/FacTipoIdentificacion';
+import { FacTarifaIva } from '../entities/FacTarifaIva';
 import  builder  from 'xmlbuilder'
 
 export class FacturaServices {
+
+    
+    async getTarifasIva(){
+        try{
+            const result = await getRepository(FacTarifaIva)
+                           .createQueryBuilder("tarifas")
+                           .select("tarifas")
+                           .orderBy("tarifas.default", "DESC")
+                           .getMany();
+            return result;
+        }catch(err){
+            throw new Error(err);
+        }
+    }
 
 
     async getEmisorById(pid: number){

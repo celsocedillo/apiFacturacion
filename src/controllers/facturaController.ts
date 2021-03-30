@@ -10,6 +10,19 @@ const facturaService = new FacturaServices();
 
 //const mail = require(`${config.utilsFolder}/sendEmail`);
 
+export const getTarifasIva = async (req : Request, res: Response):Promise<Response> => {
+    try{
+        const resultado = await facturaService.getTarifasIva();
+        return res.status(201).json({data: resultado});
+    }catch(err){ 
+        // logger.error(err.stack);
+        // mail.enviarMail(err.stack, `${msgAsunto} - [getActas]`)
+        return res.status(501).send({error:err.stack});
+    }
+}
+
+
+
 export const getEmisorById = async (req : Request, res: Response):Promise<Response> => {
     try{
         const resultado = await facturaService.getEmisorById(parseInt(req.params.id));
@@ -47,8 +60,8 @@ export const getFactura = async (req : Request, res: Response):Promise<Response>
 export const create = async (req : Request, res: Response):Promise<Response> => {
     try{
         let record = req.body.factura;
-        //console.log("factura", req.body);
-        facturaService.pruebaxml(req.body);
+        console.log("factura", req.body);
+        //facturaService.pruebaxml(req.body);
         //const resultado = await facturaService.create(record);
         //return res.status(201).json({data: resultado})
         return res.status(201).json({data: null})

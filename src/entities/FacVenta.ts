@@ -30,6 +30,7 @@ export class FacVenta {
   })
   valorSubtotal: string | null;
 
+
   @Column("numeric", {
     name: "valor_descuento",
     nullable: true,
@@ -38,8 +39,13 @@ export class FacVenta {
   })
   valorDescuento: string | null;
 
-  @Column("integer", { name: "porcentaje_iva", nullable: true })
-  porcentajeIva: number | null;
+  @Column("numeric", {
+    name: "porcentaje_iva",
+    nullable: true,
+    precision: 4,
+    scale: 2,
+  })
+  porcentajeIva: string | null;
 
   @Column("numeric", {
     name: "valor_iva",

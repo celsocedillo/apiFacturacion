@@ -4,6 +4,7 @@ import { InvBodega } from "../entities/InvBodega";
 import { GenCliente } from "../entities/GenCliente";
 
 export class GeneralesService {
+    
     async getBodegas(){
         try{
             const result = await getRepository(InvBodega)

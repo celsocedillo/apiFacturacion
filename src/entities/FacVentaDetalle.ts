@@ -50,6 +50,26 @@ export class FacVentaDetalle {
   })
   valorDescuento: string | null;
 
+
+  @Column("integer", { name: "codigo_impuesto", nullable: true })
+  codigoImpuesto: number | null;
+
+  @Column("numeric", {
+    name: "porcentaje_impuesto",
+    nullable: true,
+    precision: 4,
+    scale: 2,
+  })
+  porcentajeImpuesto: string | null;
+
+  @Column("numeric", {
+    name: "valor_impuesto",
+    nullable: true,
+    precision: 12,
+    scale: 2,
+  })
+  valorImpuesto: string | null;
+
   
   @ManyToOne(() => FacVenta, (facVenta) => facVenta.facVentaDetalles, {
     onDelete: "RESTRICT",

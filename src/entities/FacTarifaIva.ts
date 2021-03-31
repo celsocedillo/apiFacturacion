@@ -13,5 +13,11 @@ export class FacTarifaIva {
   @Column("character varying", { name: "default", nullable: true, length: 1})
   default: string | null;
 
+  @Column("character varying", { name: "estado", nullable: true, length: 1})
+  estado: string | null;
+
+  @Column("character varying", { name: "tiene_valor", nullable: true, length: 1})
+  tieneValor: string | null;
+
 
 }

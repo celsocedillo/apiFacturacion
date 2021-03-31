@@ -16,6 +16,7 @@ export class FacturaServices {
             const result = await getRepository(FacTarifaIva)
                            .createQueryBuilder("tarifas")
                            .select("tarifas")
+                           .where("tarifas.estado = 'A'")
                            .orderBy("tarifas.default", "DESC")
                            .getMany();
             return result;
@@ -69,12 +70,17 @@ export class FacturaServices {
 
     async create(pregistro : any){
         try{
+            console.log("graba", pregistro)
             let resultado = await getRepository(FacVenta).save(pregistro);
-            for (let i = 0; i < pregistro.facVentaDetalles.length; i++ ){
-                let detalle = {...resultado.facVentaDetalles[i], ventaId: resultado.id};
-                const resultadoDetalle =  await getRepository(FacVentaDetalle).save(detalle);
-                resultado.facVentaDetalles[i].ventaId = resultadoDetalle.id;
-            }
+            // for (let i = 0; i < pregistro.detalle.length; i++ ){
+            //     let detalle = {...resultado.facVentaDetalles[i], ventaId: resultado.id};
+            //     const resultadoDetalle =  await getRepository(FacVentaDetalle).save(detalle);
+            //     resultado.facVentaDetalles[i].ventaId = resultadoDetalle.id;
+            // }
+            pregistro.detalle.map(async (item: any)=> {
+                item.ventaId = resultado.id;
+                const resultadoDetalle = await getRepository(FacVentaDetalle).save(item);
+            })
             return resultado;
         }catch(err){
             throw new Error(err);

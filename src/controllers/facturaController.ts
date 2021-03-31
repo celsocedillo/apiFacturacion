@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 import { getRepository,  getManager} from 'typeorm';
 
 import { FacturaServices } from '../services/facturaServices';
+import { GenerarXMLService } from '../services/generarXMLServices';
 //import { logger } from "../utils/logger";
 import moment from "moment";
 import { FacVenta } from "../entities/FacVenta";
 import config from "../config.json";
 const facturaService = new FacturaServices();
+const generarXMLServices = new GenerarXMLService();
 
 //const mail = require(`${config.utilsFolder}/sendEmail`);
 
@@ -21,8 +23,6 @@ export const getTarifasIva = async (req : Request, res: Response):Promise<Respon
     }
 }
 
-
-
 export const getEmisorById = async (req : Request, res: Response):Promise<Response> => {
     try{
         const resultado = await facturaService.getEmisorById(parseInt(req.params.id));
@@ -33,7 +33,6 @@ export const getEmisorById = async (req : Request, res: Response):Promise<Respon
         return res.status(501).send({error:err.stack});
     }
 }
-
 
 export const getFacturas = async (req : Request, res: Response):Promise<Response> => {
     try{
@@ -49,6 +48,7 @@ export const getFacturas = async (req : Request, res: Response):Promise<Response
 export const getFactura = async (req : Request, res: Response):Promise<Response> => {
     try{
         const resultado = await facturaService.getFactura(Number.parseInt(req.params.id));
+        generarXMLServices.generaFactura(Number.parseInt(req.params.id));
         return res.status(201).json({data: resultado});
     }catch(err){ 
         // logger.error(err.stack);
@@ -59,17 +59,18 @@ export const getFactura = async (req : Request, res: Response):Promise<Response>
 
 export const create = async (req : Request, res: Response):Promise<Response> => {
     try{
-        let record = req.body.factura;
-        console.log("factura", req.body);
+        let record = req.body;
         //facturaService.pruebaxml(req.body);
-        //const resultado = await facturaService.create(record);
-        //return res.status(201).json({data: resultado})
-        return res.status(201).json({data: null})
+        const resultado = await facturaService.create(record);
+        return res.status(201).json({data: resultado})
+        //return res.status(201).json({data: null})
     }catch(err){
         // logger.error(err.stack);
         // mail.enviarMail(err.stack, `${msgAsunto} - [create]`)
         return res.status(501).send({error:err.stack});
     }
 }
+
+
 
 

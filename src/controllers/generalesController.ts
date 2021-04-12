@@ -22,3 +22,17 @@ export const getClienteByRuc = async (req : Request, res: Response):Promise<Resp
         return res.status(501).send({error:err.stack});
     }
 }
+
+
+export const create = async (req : Request, res: Response):Promise<Response> => {
+    try{
+        let record = req.body;
+        const resultado = await generalesService.create(record);
+        return res.status(201).json({data: resultado})
+    }catch(err){
+        // logger.error(err.stack);
+        // mail.enviarMail(err.stack, `${msgAsunto} - [create]`)
+        return res.status(501).send({error:err.stack});
+    }
+   
+}

@@ -30,4 +30,17 @@ export class GeneralesService {
         }
     }
 
+ 
+    async create(pcliente: any){
+        try{
+            let resultado = getRepository(GenCliente).save(pcliente);
+            return resultado;
+        }
+        catch(err){
+            throw new Error(err);
+        }
+
+
+    }
+
 }

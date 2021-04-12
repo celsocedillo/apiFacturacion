@@ -37,6 +37,13 @@ export class GenCliente {
   })
   direccion: string | null;
 
+  @Column("character varying", {
+    name: "email",
+    nullable: true,
+    length: 150,
+  })
+  email: string | null;
+
   @Column("character varying", { name: "telefono", nullable: true, length: 25 })
   telefono: string | null;
 
